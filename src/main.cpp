@@ -1,17 +1,24 @@
 #include <stdio.h>
 #include <GLFW/glfw3.h> 
 
-int main(int argc, const char** argv) {
-    GLFWwindow* window;
+void error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Error: %s\n", description);
+}
+
+int main(void) {
     if(!glfwInit()) {
         printf("Error during initialization of GLFW");
-        return 1;
+        return -1;
     }
+
+    glfwSetErrorCallback(error_callback);
     
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if(!window) {
+        glfwTerminate();
         printf("Error opening window");
-        return 1;
+        return -1;
     }
 
     unsigned char* data = new unsigned char[100 * 100 * 3];
@@ -27,11 +34,11 @@ int main(int argc, const char** argv) {
     while (!glfwWindowShouldClose(window)) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDrawPixels(100, 100, GL_RGB, GL_UNSIGNED_BYTE, data);
         glfwSwapBuffers(window);
 
-        glfwWaitEvents();
+        glfwPollEvents();
     }
 
+    glfwTerminate();
     return 0;
 }
